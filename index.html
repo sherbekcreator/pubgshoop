@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>EMI.X Mobile - PUBG 0.3</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+    #gameContainer {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 800px;
+      max-height: 450px;
+      background: #1e3a4a;
+      overflow: hidden;
+      box-shadow: 0 0 20px black;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #3b7a5e;
+      touch-action: none;
+    }
+    #ui {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      backdrop-filter: blur(4px);
+      z-index: 10;
+    }
+    #inventory {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 8px;
+      border-radius: 15px;
+      width: 180px;
+      backdrop-filter: blur(4px);
+      font-size: 13px;
+      z-index: 10;
+    }
+    #minimap {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 120px;
+      height: 120px;
+      background: #1e2f3a;
+      border-radius: 10px;
+      border: 2px solid #5a7e8c;
+      overflow: hidden;
+      z-index: 10;
+    }
+    #minimapCanvas {
+      width: 100%;
+      height: 100%;
+    }
+    #loginScreen, #lobbyScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 20px;
+    }
+    #lobbyScreen {
+      display: none;
+    }
+    button {
+      padding: 12px 25px;
+      margin: 10px;
+      background: #2e8b57;
+      border: none;
+      color: white;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #1b4d2b;
+    }
+    button:active {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+    input {
+      padding: 12px;
+      border-radius: 30px;
+      border: none;
+      background: #2c3e50;
+      color: white;
+      width: 80%;
+      max-width: 300px;
+    }
+    #playerList {
+      background: #1a2a33;
+      padding: 10px;
+      border-radius: 15px;
+      max-height: 150px;
+      overflow-y: auto;
+      width: 90%;
+      max-width: 350px;
+      margin: 10px 0;
+    }
+    .menuBtn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 44px;
+      height: 44px;
+      background: #2e8b57;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      z-index: 100;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #1b4d2b;
+    }
+    .popup-menu {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      background: #1f2c3a;
+      border-radius: 15px;
+      padding: 10px;
+      width: 200px;
+      display: none;
+      z-index: 150;
+      border: 1px solid #3a4e6b;
+    }
+    .popup-menu div {
+      padding: 10px;
+      border-bottom: 1px solid #3a4e6b;
+      cursor: pointer;
+    }
+    .popup-menu div:last-child {
+      border-bottom: none;
+    }
+    .submenu {
+      margin-left: 15px;
+      display: none;
+    }
+    .submenu.active {
+      display: block;
+    }
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+    }
+    #controls button {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #2e8b57;
+      font-size: 12px;
+      margin: 0;
+      padding: 0;
+      box-shadow: 0 4px 0 #1b4d2b;
+    }
+  </style>
+</head>
+<body>
+<div id="gameContainer">
+  <canvas id="gameCanvas"></canvas>
+
+  <div id="ui">❤️ <span id="health">100</span> | 🛡️ <span id="armor">0</span> | ⛑️ <span id="helmet">0</span></div>
+  <div id="inventory">
+    <b>🎒 <span id="backpackLvl">1</span>-daraja</b>
+    <div id="itemsList" style="margin-top:5px; max-height:100px; overflow-y:auto;"></div>
+  </div>
+  <div id="minimap"><canvas id="minimapCanvas"></canvas></div>
+
+  <div class="menuBtn" id="menuToggle">^</div>
+  <div class="popup-menu" id="menuPopup">
+    <div onclick="showSubmenu('xabar')">📩 Xabar</div>
+    <div class="submenu" id="xabarSubmenu">
+      <div>👥 Do'stlar</div>
+      <div>🔔 Bildirishnoma</div>
+      <div>🚩 Shikoyat</div>
+    </div>
+    <div onclick="alert('Sozlamalar')">⚙️ Sozlamalar</div>
+    <div onclick="alert('Klan')">🛡 Klan</div>
+    <div onclick="alert('Reyting')">🏆 Reyting</div>
+  </div>
+
+  <div id="loginScreen">
+    <h2>EMI.X Mobile</h2>
+    <p style="margin:20px 0;">Google orqali kiring</p>
+    <button id="googleLogin">🔴 Google bilan kirish</button>
+  </div>
+
+  <div id="lobbyScreen">
+    <h2>Lobby</h2>
+    <div id="playerList"></div>
+    <button id="startGameBtn">🎮 O'yinni boshlash</button>
+    <p style="margin-top:15px;">ID: <span id="playerIdDisplay"></span></p>
+  </div>
+
+  <div id="controls">
+    <button id="btnUp">⬆️</button>
+    <button id="btnDown">⬇️</button>
+    <button id="btnLeft">⬅️</button>
+    <button id="btnRight">➡️</button>
+    <button id="btnFire">🔫</button>
+  </div>
+</div>
+
+<script>
+  // Firebase sozlamalari (o'zingiznikini yozing)
+  const firebaseConfig = {
+    apiKey: "AIzaSyB...",
+    authDomain: "your-project.firebaseapp.com",
+    databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+    projectId: "your-project",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abc123"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  // O'yinchi ma'lumotlari
+  let player = null;
+  let playerRef = null;
+  let playersRef = db.ref('players');
+  let players = {}; // boshqa o'yinchilar
+
+  // Canvas va kontekst
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const minimapCanvas = document.getElementById('minimapCanvas');
+  const minimapCtx = minimapCanvas.getContext('2d');
+
+  // O'lchamlarni moslash
+  function resizeCanvas() {
+    const container = document.getElementById('gameContainer');
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    minimapCanvas.width = 120;
+    minimapCanvas.height = 120;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // Orqa fon rasmi (internetdan yuklanadi)
+  let backgroundImage = new Image();
+  // O'zingiz xohlagan rasm URL ini qo'ying (masalan Erangel xaritasi)
+  backgroundImage.src = 'https://i.imgur.com/ZTUwFeg.jpg'; 
+  let backgroundLoaded = false;
+  backgroundImage.onload = () => backgroundLoaded = true;
+  backgroundImage.onerror = () => backgroundLoaded = false; 
+
+  // O'yin holati
+  let keys = {};
+  let mouseX = 0, mouseY = 0;
+  let gameRunning = false;
+
+  // O'yinchi xususiyatlari
+  let myPlayer = {
+    x: 500, y: 300,
+    health: 100,
+    armor: 0,
+    helmet: 0,
+    backpack: 1,
+    inventory: [], 
+    weapon: null,
+    ammo: 0
+  };
+
+  // Dunyo ob'ektlari (uylar, loot)
+  const houses = [];
+
+  // Erangel xaritasi (uylar va loot yaratish)
+  function generateMap() {
+    for (let i = 0; i < 12; i++) {
+      houses.push({
+        x: 150 + Math.random() * (canvas.width - 300),
+        y: 80 + Math.random() * (canvas.height - 160),
+        w: 70, h: 50,
+        loot: []
+      });
+    }
+    // Loot yaratish
+    houses.forEach(house => {
+      for (let j = 0; j < 2 + Math.floor(Math.random()*4); j++) {
+        let type = Math.random();
+        let item;
+        if (type < 0.3) item = { name: 'Aptechka', type: 'med', heal: 50 };
+        else if (type < 0.5) item = { name: 'Kaska 1', type: 'helmet', level: 1 };
+        else if (type < 0.65) item = { name: 'Kaska 2', type: 'helmet', level: 2 };
+        else if (type < 0.75) item = { name: 'Kaska 3', type: 'helmet', level: 3 };
+        else if (type < 0.9) item = { name: 'Jilet 1', type: 'armor', level: 1 };
+        else item = { name: 'M416', type: 'weapon', damage: 35, ammo: 30 };
+        house.loot.push({
+          ...item,
+          x: house.x - house.w/2 + 10 + Math.random() * (house.w-20),
+          y: house.y - house.h/2 + 10 + Math.random() * (house.h-20)
+        });
+      }
+    });
+  }
+  generateMap();
+
+  // Google login
+  document.getElementById('googleLogin').onclick = () => {
+    auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(result => {
+      const user = result.user;
+      player = {
+        uid: user.uid,
+        name: user.displayName,
+        id: '25' + Math.floor(10000 + Math.random()*90000)
+      };
+      document.getElementById('playerIdDisplay').innerText = player.id;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('lobbyScreen').style.display = 'flex';
+      // Lobbyda boshqa o'yinchilarni ko'rsatish
+      playersRef.on('value', snap => {
+        let html = '';
+        snap.forEach(child => {
+          const p = child.val();
+          if (child.key !== player.uid) html += `<div>${p.name} (tayyor)</div>`;
+        });
+        document.getElementById('playerList').innerHTML = html || 'Hozircha boshqa o\'yinchi yo\'q';
+      });
+    }).catch(err => {
+        alert("Kirishda xatolik yuz berdi yoki Firebase sozlanmagan.");
+    });
+  };
+
+  // O'yinni boshlash (lobbydan)
+  document.getElementById('startGameBtn').onclick = () => {
+    document.getElementById('lobbyScreen').style.display = 'none';
+    gameRunning = true;
+    // O'z ma'lumotlarini Firebase ga yozish
+    playerRef = db.ref('players/' + player.uid);
+    playerRef.set({
+      name: player.name,
+      x: myPlayer.x,
+      y: myPlayer.y,
+      health: myPlayer.health
+    });
+    // Boshqa o'yinchilarni kuzatish
+    playersRef.on('child_added', snap => {
+      if (snap.key !== player.uid) {
+        players[snap.key] = snap.val();
+      }
+    });
+    playersRef.on('child_changed', snap => {
+      if (snap.key !== player.uid) {
+        players[snap.key] = snap.val();
+      }
+    });
+    playersRef.on('child_removed', snap => {
+      delete players[snap.key];
+    });
+    gameLoop();
+  };
+
+  // Harakat (klaviatura va tugmalar)
+  function handleMovement() {
+    let speed = 5;
+    if (keys['KeyW'] || keys['ArrowUp']) myPlayer.y -= speed;
+    if (keys['KeyS'] || keys['ArrowDown']) myPlayer.y += speed;
+    if (keys['KeyA'] || keys['ArrowLeft']) myPlayer.x -= speed;
+    if (keys['KeyD'] || keys['ArrowRight']) myPlayer.x += speed;
+    // Cheklovlar
+    myPlayer.x = Math.max(20, Math.min(canvas.width-20, myPlayer.x));
+    myPlayer.y = Math.max(20, Math.min(canvas.height-20, myPlayer.y));
+    // Uylar bilan kolliziya (oddiy)
+    houses.forEach(house => {
+      if (myPlayer.x > house.x - house.w/2 && myPlayer.x < house.x + house.w/2 &&
+          myPlayer.y > house.y - house.h/2 && myPlayer.y < house.y + house.h/2) {
+        // Teskari surish
+        if (keys['KeyW'] || keys['ArrowUp']) myPlayer.y += speed;
+        if (keys['KeyS'] || keys['ArrowDown']) myPlayer.y -= speed;
+        if (keys['KeyA'] || keys['ArrowLeft']) myPlayer.x += speed;
+        if (keys['KeyD'] || keys['ArrowRight']) myPlayer.x -= speed;
+      }
+    });
+  }
+
+  // Loot olish
+  function pickupLoot() {
+    houses.forEach(house => {
+      house.loot.forEach((item, index) => {
+        let dist = Math.hypot(item.x - myPlayer.x, item.y - myPlayer.y);
+        if (dist < 30) {
+          if (myPlayer.inventory.length < myPlayer.backpack * 5) {
+            myPlayer.inventory.push(item);
+            house.loot.splice(index, 1);
+            if (item.type === 'helmet') myPlayer.helmet = item.level;
+            if (item.type === 'armor') myPlayer.armor = item.level;
+            if (item.type === 'weapon') myPlayer.weapon = item;
+          }
+        }
+      });
+    });
+  }
+
+  // Otish
+  function shoot() {
+    if (!myPlayer.weapon) return;
+    for (let uid in players) {
+      let p = players[uid];
+      if (!p) continue;
+      let dist = Math.hypot(p.x - myPlayer.x, p.y - myPlayer.y);
+      if (dist < 150) { // masofa
+        let dmg = myPlayer.weapon.damage || 35;
+        if (p.helmet) dmg *= 0.6;
+        if (p.armor) dmg *= 0.7;
+        let newHealth = (p.health || 100) - dmg;
+        db.ref('players/' + uid).update({ health: newHealth });
+      }
+    }
+  }
+
+  // O'yin sikli
+  function gameLoop() {
+    if (!gameRunning) return;
+    handleMovement();
+    draw();
+    // O'z holatini Firebase ga yuborish
+    if (playerRef) {
+      playerRef.update({
+        x: myPlayer.x,
+        y: myPlayer.y,
+        health: myPlayer.health
+      });
+    }
+    requestAnimationFrame(gameLoop);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Orqa fon rasmi (agar yuklangan bo'lsa)
+    if (backgroundLoaded && backgroundImage.complete) {
+      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    } else {
+      // Fallback rangli fon (Erangel uslubida)
+      ctx.fillStyle = '#5a8f4c';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Yo'llar (fallback)
+      ctx.strokeStyle = '#6b4f3a';
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height/2);
+      ctx.lineTo(canvas.width, canvas.height/2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(canvas.width/2, 0);
+      ctx.lineTo(canvas.width/2, canvas.height);
+      ctx.stroke();
+    }
+
+    // Uylarni chizish
+    houses.forEach(house => {
+      ctx.fillStyle = '#b57d4a';
+      ctx.fillRect(house.x - house.w/2, house.y - house.h/2, house.w, house.h);
+      ctx.strokeStyle = '#5a3e2b';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(house.x - house.w/2, house.y - house.h/2, house.w, house.h);
+      // Loot nuqtalari
+      house.loot.forEach(item => {
+        ctx.fillStyle = item.type === 'weapon' ? '#ff00ff' : (item.type === 'med' ? '#00ff00' : '#ffff00');
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, 6, 0, 2*Math.PI);
+        ctx.fill();
+      });
+    });
+
+    // Boshqa o'yinchilar
+    for (let uid in players) {
+      let p = players[uid];
+      if (!p) continue;
+      ctx.fillStyle = '#ff3333';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 12, 0, 2*Math.PI);
+      ctx.fill();
+      ctx.fillStyle = 'white';
+      ctx.font = '12px sans-serif';
+      ctx.fillText(p.name || '?', p.x-20, p.y-20);
+    }
+
+    // O'z o'yinchisi
+    ctx.fillStyle = '#33aaff';
+    ctx.beginPath();
+    ctx.arc(myPlayer.x, myPlayer.y, 15, 0, 2*Math.PI);
+    ctx.fill();
+    // Qurol yo'nalishi
+    ctx.beginPath();
+    ctx.moveTo(myPlayer.x, myPlayer.y);
+    ctx.lineTo(mouseX, mouseY);
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Minimap
+    minimapCtx.clearRect(0, 0, 120, 120);
+    minimapCtx.fillStyle = '#1e2f3a';
+    minimapCtx.fillRect(0, 0, 120, 120);
+    // Uylar (minimapda)
+    houses.forEach(house => {
+      minimapCtx.fillStyle = '#8b5a2b';
+      minimapCtx.fillRect(house.x/canvas.width*120 - 3, house.y/canvas.height*120 - 2, 6, 4);
+    });
+    // O'yinchilar (minimapda)
+    minimapCtx.fillStyle = 'blue';
+    minimapCtx.beginPath();
+    minimapCtx.arc(myPlayer.x/canvas.width*120, myPlayer.y/canvas.height*120, 3, 0, 2*Math.PI);
+    minimapCtx.fill();
+    for (let uid in players) {
+      let p = players[uid];
+      if (!p) continue;
+      minimapCtx.fillStyle = 'red';
+      minimapCtx.beginPath();
+      minimapCtx.arc(p.x/canvas.width*120, p.y/canvas.height*120, 2, 0, 2*Math.PI);
+      minimapCtx.fill();
+    }
+
+    // UI yangilash
+    document.getElementById('health').innerText = myPlayer.health;
+    document.getElementById('armor').innerText = myPlayer.armor;
+    document.getElementById('helmet').innerText = myPlayer.helmet;
+    document.getElementById('backpackLvl').innerText = myPlayer.backpack;
+    let invHtml = '';
+    myPlayer.inventory.forEach((item, i) => invHtml += `<div>${item.name}</div>`);
+    document.getElementById('itemsList').innerHTML = invHtml || 'Bo\'sh';
+  }
+
+  // Touch va klaviatura hodisalari
+  window.addEventListener('keydown', e => {
+    keys[e.code] = true;
+    if (e.code === 'KeyF') {
+      pickupLoot();
+    }
+  });
+  window.addEventListener('keyup', e => keys[e.code] = false);
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    mouseX = (e.clientX - rect.left) * scaleX;
+    mouseY = (e.clientY - rect.top) * scaleY;
+  });
+  canvas.addEventListener('click', shoot);
+  
+  // Mobile tugmalar
+  document.getElementById('btnUp').addEventListener('touchstart', () => keys['ArrowUp'] = true);
+  document.getElementById('btnUp').addEventListener('touchend', () => keys['ArrowUp'] = false);
+  document.getElementById('btnDown').addEventListener('touchstart', () => keys['ArrowDown'] = true);
+  document.getElementById('btnDown').addEventListener('touchend', () => keys['ArrowDown'] = false);
+  document.getElementById('btnLeft').addEventListener('touchstart', () => keys['ArrowLeft'] = true);
+  document.getElementById('btnLeft').addEventListener('touchend', () => keys['ArrowLeft'] = false);
+  document.getElementById('btnRight').addEventListener('touchstart', () => keys['ArrowRight'] = true);
+  document.getElementById('btnRight').addEventListener('touchend', () => keys['ArrowRight'] = false);
+  document.getElementById('btnFire').addEventListener('touchstart', shoot);
+
+  // Menyu
+  document.getElementById('menuToggle').addEventListener('click', (e) => {
+    const menu = document.getElementById('menuPopup');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    e.stopPropagation();
+  });
+  window.showSubmenu = function(sub) {
+    document.getElementById('xabarSubmenu').classList.toggle('active');
+  };
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('menuPopup');
+    const btn = document.getElementById('menuToggle');
+    if (!menu.contains(e.target) && e.target !== btn) {
+      menu.style.display = 'none';
+      document.getElementById('xabarSubmenu').classList.remove('active');
+    }
+  });
+
+  // Sumka darajasini o'zgartirish
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Digit1') myPlayer.backpack = 1;
+    if (e.code === 'Digit2') myPlayer.backpack = 2;
+    if (e.code === 'Digit3') myPlayer.backpack = 3;
+  });
+</script>
+</body>
+</html>
