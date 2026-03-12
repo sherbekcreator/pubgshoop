@@ -146,31 +146,43 @@
                 <h3>🎮 PUBG Mobile UC</h3>
                 <span class="close-btn" onclick="closeModal()">✖</span>
             </div>
-            <div class="products-list">
-                <div class="product-item">
+            <div class="product-item">
                     <div class="prod-info">📦 60 UC</div>
-                    <button class="buy-btn">11,500 UZS</button>
+                    <button class="buy-btn" onclick="buyItem('60 UC', 11500)">11,500 UZS</button>
                 </div>
                 <div class="product-item">
                     <div class="prod-info">📦 325 UC</div>
-                    <button class="buy-btn">54,000 UZS</button>
+                    <button class="buy-btn" onclick="buyItem('325 UC', 54000)">54,000 UZS</button>
                 </div>
                 <div class="product-item">
                     <div class="prod-info">📦 660 UC</div>
-                    <button class="buy-btn">105,000 UZS</button>
+                    <button class="buy-btn" onclick="buyItem('660 UC', 105000)">105,000 UZS</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Modalni ochish
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Ilovani to'liq ekranga ochish
+
         function openModal() {
             document.getElementById('pubg-modal').style.display = 'flex';
         }
-        // Modalni yopish
         function closeModal() {
             document.getElementById('pubg-modal').style.display = 'none';
+        }
+
+        // XARID QILISH TUGMASI BOSILGANDA BOTGA XABAR YUBORISH
+        function buyItem(itemName, itemPrice) {
+            let data = {
+                action: "buy",
+                item: itemName,
+                price: itemPrice
+            };
+            // Ma'lumotni botga yuborish
+            tg.sendData(JSON.stringify(data)); 
         }
     </script>
 
