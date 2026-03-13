@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PUBGShop Web App</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #0b1121; color: white; padding: 15px; padding-bottom: 80px; }
         
+        /* HEADER (Profil) */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .user-info { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 45px; height: 45px; border-radius: 50%; background-color: #4338ca; display: flex; justify-content: center; align-items: center; font-size: 20px;}
-        .user-details h3 { font-size: 14px; margin: 0; text-transform: uppercase; }
-        .user-details p { font-size: 12px; color: #9ca3af; margin: 0; }
+        .user-details h3 { font-size: 14px; margin: 0; text-transform: uppercase; font-weight: 800;}
+        .user-details p { font-size: 11px; color: #9ca3af; margin: 0; font-weight: 600;}
         
         .btn-browser { width: 100%; background-color: #4338ca; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer;}
         .btn-browser:active { transform: scale(0.98); }
         
+        /* BALANS */
         .balance-card { background-color: #4338ca; border-radius: 16px; padding: 20px; margin-bottom: 25px;}
         .balance-card h1 { font-size: 32px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px;}
         .balance-card h1 span { font-size: 18px; font-weight: normal; cursor: pointer;}
@@ -30,7 +32,7 @@
 
         .section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; margin-top: 10px;}
         
-        /* BANNER QISMI (2-rasmdagidek o'zgartirildi) */
+        /* BANNER */
         .banner { width: 100%; height: 120px; background: linear-gradient(90deg, #1e1b4b, #312e81); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; padding: 20px; margin-bottom: 25px; border: 1px solid #4338ca; }
         .banner h2 { font-size: 16px; color: white; margin-bottom: 8px; font-weight: 800;}
         .banner p { font-size: 11px; font-weight: 600; color: #fbbf24; line-height: 1.4;}
@@ -40,6 +42,7 @@
         .tab-active { background-color: #4338ca; color: white; }
         .tab-inactive { color: #9ca3af; }
 
+        /* O'YINLAR */
         .games-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 30px; }
         .game-card { background-color: #1a2236; border-radius: 14px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #2e374d; cursor: pointer;}
         .game-card:active { transform: scale(0.98); }
@@ -47,19 +50,40 @@
         .game-info h4 { font-size: 13px; margin: 0; }
         .game-info p { font-size: 10px; color: #9ca3af; }
 
+        /* PASTKI MENYU (Gift Arenda olib tashlandi, 3 ta qoldi) */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background-color: #0b1121; border-top: 1px solid #2e374d; display: flex; justify-content: space-around; align-items: center; padding-bottom: 10px; z-index: 100;}
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #9ca3af; font-size: 10px; gap: 4px; cursor: pointer;}
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #9ca3af; font-size: 10px; gap: 4px; cursor: pointer; width: 33%;}
         .nav-item span { font-size: 20px; }
         .active-nav { color: #4338ca; }
 
+        /* MODAL OYNALAR ASOSI */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
-        .modal-content { background-color: #0b1121; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; border-top: 2px solid #4338ca; animation: slideUp 0.3s ease; }
+        .modal-content { background-color: #0b1121; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; border-top: 2px solid #4338ca; animation: slideUp 0.3s ease; max-height: 90vh; overflow-y: auto;}
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        /* PUBG MODAL ICHI */
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2e374d; padding-bottom: 15px;}
         .close-btn { font-size: 24px; cursor: pointer; color: #9ca3af; }
         .product-item { display: flex; justify-content: space-between; align-items: center; background-color: #1a2236; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #2e374d;}
         .prod-info { font-weight: bold; font-size: 14px;}
         .buy-btn { background-color: #4338ca; color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 12px;}
+
+        /* --- YANGI: TO'LOV MODAL OYNASI --- */
+        .payment-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #4338ca; font-weight: 700; margin-bottom: 15px;}
+        .guide-btn { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;}
+        .payment-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px;}
+        .pay-method { background-color: white; color: #0b1121; height: 50px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 12px; cursor: pointer; border: 2px solid transparent;}
+        .pay-method.active { border: 2px solid #4338ca; } /* Tanlanganda ko'k ramka bo'ladi */
+        .uzcard { color: #3b82f6; }
+        .humo { color: #f59e0b; }
+        .bankomat { color: #4f46e5; }
+        
+        .pay-info { font-size: 12px; color: #9ca3af; margin-bottom: 20px;}
+        .pay-info .comm { display: block; color: #4338ca; font-weight: bold; text-align: center; margin-bottom: 15px;}
+        .pay-info span { display: block; margin-bottom: 5px; }
+        
+        .continue-btn { width: 100%; background-color: #1e1b4b; color: #4338ca; border: none; padding: 16px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;}
+        .continue-btn.active { background-color: #4338ca; color: white; }
     </style>
 </head>
 <body>
@@ -68,23 +92,23 @@
         <div class="user-info">
             <div class="avatar">👤</div>
             <div class="user-details">
-                <h3 id="user_name">Sherbek Shavkatov</h3>
-                <p>SHUXRATVICH 👨🏻‍💻🌐👾</p>
+                <h3 id="tg_first_name">YUKLANMOQDA...</h3>
+                <p id="tg_username">Mijoz 👨🏻‍💻</p>
             </div>
         </div>
-        </div>
+    </div>
 
-    <button class="btn-browser" onclick="alert('Bu tugma bosilganda sayt brauzerda ochiladi!')">
+    <button class="btn-browser">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         Brauzerda ochish
     </button>
 
     <div class="balance-card">
-        <h1 onclick="alert('Balans yangilanmoqda...')">0 so'm <span>🔄</span></h1>
-        <div class="username">Telegram username</div>
+        <h1>0 so'm <span>🔄</span></h1>
+        <div class="username" id="tg_username_bottom">@username</div>
         <div class="action-row">
-            <button class="action-btn" onclick="alert('Hisobni to\'ldirish bo\'limi botga ulangan. Ilovani yopib botdan to\'ldiring.')"><span>💳</span> Hisobni to'ldirish</button>
-            <button class="action-btn" onclick="alert('To\'lov tarixi oynasi tez orada qo\'shiladi!')"><span>🕒</span> To'lov tarixi</button>
+            <button class="action-btn" onclick="openPaymentModal()"><span>💳</span> Hisobni to'ldirish</button>
+            <button class="action-btn"><span>🕒</span> To'lov tarixi</button>
         </div>
     </div>
 
@@ -95,8 +119,8 @@
     </div>
 
     <div class="tab-row">
-        <div class="tab-item tab-active" onclick="alert('Siz ID orqali xarid rejimidasiz')">ID</div>
-        <div class="tab-item tab-inactive" onclick="alert('Avto (24/7) tizimi tanlandi')">Avto (24/7)</div>
+        <div class="tab-item tab-active">ID</div>
+        <div class="tab-item tab-inactive">Avto (24/7)</div>
     </div>
 
     <div class="section-title">O'yinlar</div>
@@ -108,13 +132,12 @@
                 <p>Global UC</p>
             </div>
         </div>
-        </div>
+    </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active-nav" onclick="alert('Asosiy oyna')"><span>🏠</span><p>Asosiy</p></div>
-        <div class="nav-item" onclick="alert('Arenda bo\'limi ochilmoqda')"><span>🎒</span><p>Gift arenda</p></div>
-        <div class="nav-item" onclick="alert('Tarix bo\'limi')"><span>🕒</span><p>Tarix</p></div>
-        <div class="nav-item" onclick="alert('Sozlamalar')"><span>⚙️</span><p>Sozlamalar</p></div>
+        <div class="nav-item active-nav"><span>🏠</span><p>Asosiy</p></div>
+        <div class="nav-item"><span>🕒</span><p>Tarix</p></div>
+        <div class="nav-item"><span>⚙️</span><p>Sozlamalar</p></div>
     </div>
 
     <div class="modal-overlay" id="pubg-modal">
@@ -124,18 +147,43 @@
                 <span class="close-btn" onclick="closeModal()">✖</span>
             </div>
             <div class="product-item">
-                    <div class="prod-info">📦 60 UC</div>
-                    <button class="buy-btn" onclick="buyItem('60 UC', 11500)">11,500 UZS</button>
-                </div>
-                <div class="product-item">
-                    <div class="prod-info">📦 325 UC</div>
-                    <button class="buy-btn" onclick="buyItem('325 UC', 54000)">54,000 UZS</button>
-                </div>
-                <div class="product-item">
-                    <div class="prod-info">📦 660 UC</div>
-                    <button class="buy-btn" onclick="buyItem('660 UC', 105000)">105,000 UZS</button>
-                </div>
+                <div class="prod-info">📦 60 UC</div>
+                <button class="buy-btn" onclick="buyItem('60 UC', 11500)">11,500 UZS</button>
             </div>
+            <div class="product-item">
+                <div class="prod-info">📦 325 UC</div>
+                <button class="buy-btn" onclick="buyItem('325 UC', 54000)">54,000 UZS</button>
+            </div>
+            <div class="product-item">
+                <div class="prod-info">📦 660 UC</div>
+                <button class="buy-btn" onclick="buyItem('660 UC', 105000)">105,000 UZS</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-content" style="background-color: #0b1121;">
+            <div class="modal-header" style="border-bottom: none; margin-bottom: 5px;">
+                <span style="font-size: 12px; color: #4338ca; font-weight: bold;">Mavjud hisob to'ldirish usullari</span>
+                <span class="close-btn" onclick="closePaymentModal()">✖</span>
+            </div>
+            <div style="text-align: right; margin-bottom: 15px;">
+                <button class="guide-btn">Qo'llanma ?</button>
+            </div>
+            
+            <div class="payment-grid">
+                <div class="pay-method uzcard" id="method_uzcard" onclick="selectMethod('uzcard')">UZCARD</div>
+                <div class="pay-method humo" id="method_humo" onclick="selectMethod('humo')">HUMO</div>
+                <div class="pay-method bankomat" id="method_bankomat" onclick="selectMethod('bankomat')">BANKOMAT</div>
+            </div>
+
+            <div class="pay-info">
+                <span class="comm">Kommissiya: 0.0%</span>
+                <span>Minimal 1,000 uzs</span>
+                <span>Maksimal 5,000,000 uzs</span>
+            </div>
+
+            <button class="continue-btn" id="btn_continue" onclick="continuePayment()">Davom etish</button>
         </div>
     </div>
 
@@ -144,22 +192,68 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        function openModal() {
-            document.getElementById('pubg-modal').style.display = 'flex';
+        // --- YASHIL RAMKA: ISMNI TELEGRAMDAN OLISH ---
+        try {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                // Ism va familiyani qo'shib yozish
+                let fullName = tg.initDataUnsafe.user.first_name;
+                if (tg.initDataUnsafe.user.last_name) {
+                    fullName += " " + tg.initDataUnsafe.user.last_name;
+                }
+                document.getElementById('tg_first_name').innerText = fullName;
+
+                // Username yozish
+                let username = tg.initDataUnsafe.user.username ? "@" + tg.initDataUnsafe.user.username : "Mijoz";
+                document.getElementById('tg_username').innerText = username + " 👨🏻‍💻";
+                document.getElementById('tg_username_bottom').innerText = username;
+            } else {
+                // Agar kompyuter brauzeridan ochsa ishlaydigan zaxira ism
+                document.getElementById('tg_first_name').innerText = "Test Foydalanuvchi";
+                document.getElementById('tg_username').innerText = "@test_user 👨🏻‍💻";
+            }
+        } catch (e) {}
+
+        // PUBG MODAL
+        function openModal() { document.getElementById('pubg-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('pubg-modal').style.display = 'none'; }
+
+        // TO'LOV MODAL
+        function openPaymentModal() { document.getElementById('payment-modal').style.display = 'flex'; }
+        function closePaymentModal() { document.getElementById('payment-modal').style.display = 'none'; }
+
+        // TO'LOV USULINI TANLASH (UZCARD, HUMO...)
+        let selectedMethod = null;
+        function selectMethod(method) {
+            // Hamma kartalardan aktiv ramkani olib tashlash
+            document.getElementById('method_uzcard').classList.remove('active');
+            document.getElementById('method_humo').classList.remove('active');
+            document.getElementById('method_bankomat').classList.remove('active');
+            
+            // Bosilganiga aktiv ramka qo'shish
+            document.getElementById('method_' + method).classList.add('active');
+            selectedMethod = method;
+            
+            // Davom etish tugmasini yoqish (ko'k qilish)
+            document.getElementById('btn_continue').classList.add('active');
         }
-        function closeModal() {
-            document.getElementById('pubg-modal').style.display = 'none';
+
+        function continuePayment() {
+            if (!selectedMethod) {
+                // Agar karta tanlamasdan bossa xato beradi
+                tg.showAlert("Iltimos, avval to'lov usulidan birini tanlang!");
+                return;
+            }
+            
+            // Botga malumot jo'natish (bot pul so'raydi)
+            tg.sendData(JSON.stringify({
+                action: "deposit", 
+                method: selectedMethod
+            }));
         }
 
         function buyItem(itemName, itemPrice) {
-            let data = {
-                action: "buy",
-                item: itemName,
-                price: itemPrice
-            };
-            tg.sendData(JSON.stringify(data)); 
+            tg.sendData(JSON.stringify({ action: "buy", item: itemName, price: itemPrice })); 
         }
     </script>
-
 </body>
 </html>
