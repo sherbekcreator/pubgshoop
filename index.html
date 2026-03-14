@@ -21,11 +21,11 @@
         
         /* BALANS */
         .balance-card { background-color: #4338ca; border-radius: 14px; padding: 15px; margin-bottom: 20px;}
-        .balance-card h1 { font-size: 26px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;}
+        .balance-card h1 { font-size: 26px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
         
-        /* 1-ISH: YANGILASH IKONKASI DIZAYNI */
-        .refresh-btn { display: flex; justify-content: center; align-items: center; width: 22px; height: 22px; background-color: #5c50e6; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .refresh-btn:active { transform: scale(0.85) rotate(45deg); }
+        /* MUALLAQ VA AYLANADIGAN REFRESH IKONKA */
+        #refreshIcon { cursor: pointer; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.9;}
+        #refreshIcon:active { opacity: 0.5; }
         
         .action-row { display: flex; justify-content: space-between; gap: 10px; }
         .action-btn { flex: 1; background-color: white; color: #4338ca; border: none; padding: 10px 5px; border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px;}
@@ -34,7 +34,7 @@
 
         .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; margin-top: 5px;}
         
-        /* 3-ISH: BANNER ORQA FONIGA RASM QO'YILDI */
+        /* BANNER */
         .banner { 
             width: 100%; height: 85px; 
             background: linear-gradient(90deg, rgba(11, 17, 33, 0.95), rgba(67, 56, 202, 0.6)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop') center/cover; 
@@ -112,9 +112,11 @@
     <div class="balance-card">
         <h1>
             0 so'm 
-            <div class="refresh-btn" onclick="alert('Balans yangilanmoqda...')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-            </div>
+            <svg id="refreshIcon" onclick="spinRefresh()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
         </h1>
         <div class="action-row">
             <button class="action-btn" onclick="openPaymentModal()"><span>💳</span> Hisobni to'ldirish</button>
@@ -217,6 +219,18 @@
                 document.getElementById('tg_username').innerText = "@test_user 👨🏻‍💻";
             }
         } catch (e) {}
+
+        // YANGILASH TUGMASINI AYLANTIRISH MANTIQI
+        let currentDeg = 0;
+        function spinRefresh() {
+            currentDeg += 360;
+            document.getElementById('refreshIcon').style.transform = 'rotate(' + currentDeg + 'deg)';
+            
+            // Telefonda titrash effekti (Haptic Feedback)
+            if(tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+        }
 
         function openModal() { document.getElementById('pubg-modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('pubg-modal').style.display = 'none'; }
