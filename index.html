@@ -23,9 +23,9 @@
         .balance-card { background-color: #4338ca; border-radius: 14px; padding: 15px; margin-bottom: 20px;}
         .balance-card h1 { font-size: 26px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
         
-        /* MUALLAQ VA AYLANADIGAN REFRESH IKONKA */
-        #refreshIcon { cursor: pointer; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.9;}
-        #refreshIcon:active { opacity: 0.5; }
+        /* MUALLAQ REFRESH IKONKASI */
+        .refresh-btn { display: flex; justify-content: center; align-items: center; width: 22px; height: 22px; background-color: #5c50e6; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .refresh-btn:active { transform: scale(0.85) rotate(45deg); }
         
         .action-row { display: flex; justify-content: space-between; gap: 10px; }
         .action-btn { flex: 1; background-color: white; color: #4338ca; border: none; padding: 10px 5px; border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px;}
@@ -67,12 +67,14 @@
         .modal-content { background-color: #0b1121; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; border-top: 2px solid #4338ca; animation: slideUp 0.3s ease; max-height: 90vh; overflow-y: auto;}
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        /* PUBG MODAL ICHI */
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2e374d; padding-bottom: 15px;}
         .close-btn { font-size: 24px; cursor: pointer; color: #9ca3af; }
+        
+        /* RO'YXATLAR UCHUN DIZAYN (Xarid va Adminlar uchun umumiy) */
         .product-item { display: flex; justify-content: space-between; align-items: center; background-color: #1a2236; padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #2e374d;}
-        .prod-info { font-weight: bold; font-size: 14px;}
+        .prod-info { font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 8px;}
         .buy-btn { background-color: #4338ca; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px;}
+        .buy-btn.write-btn { background-color: #0ea5e9; } /* Yozish tugmasi uchun ko'k rang */
 
         /* HISOB TO'LDIRISH OYNASI */
         .payment-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #4338ca; font-weight: 700; margin-bottom: 15px;}
@@ -112,11 +114,9 @@
     <div class="balance-card">
         <h1>
             0 so'm 
-            <svg id="refreshIcon" onclick="spinRefresh()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 4 23 10 17 10"></polyline>
-                <polyline points="1 20 1 14 7 14"></polyline>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
+            <div class="refresh-btn" onclick="spinRefresh()">
+                <svg id="refreshIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            </div>
         </h1>
         <div class="action-row">
             <button class="action-btn" onclick="openPaymentModal()"><span>💳</span> Hisobni to'ldirish</button>
@@ -132,7 +132,7 @@
 
     <div class="tab-row">
         <div class="tab-item tab-active">ID</div>
-        <div class="tab-item tab-inactive">Avto (24/7)</div>
+        <div class="tab-item tab-inactive" onclick="openAdminModal()">Avto (24/7)</div>
     </div>
 
     <div class="section-title">O'yinlar</div>
@@ -169,6 +169,23 @@
             <div class="product-item">
                 <div class="prod-info">📦 660 UC</div>
                 <button class="buy-btn" onclick="buyItem('660 UC', 105000)">105,000 UZS</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👨‍💻 Bizning Adminlar</h3>
+                <span class="close-btn" onclick="closeAdminModal()">✖</span>
+            </div>
+            <div class="product-item">
+                <div class="prod-info">👑 Asosiy Admin</div>
+                <button class="buy-btn write-btn" onclick="tg.openTelegramLink('https://t.me/sherxanoff')">Yozish</button>
+            </div>
+            <div class="product-item">
+                <div class="prod-info">👨‍🔧 Yordamchi Admin</div>
+                <button class="buy-btn write-btn" onclick="tg.openTelegramLink('https://t.me/pubgshoopadmin')">Yozish</button>
             </div>
         </div>
     </div>
@@ -220,23 +237,25 @@
             }
         } catch (e) {}
 
-        // YANGILASH TUGMASINI AYLANTIRISH MANTIQI
+        // YANGILASH TUGMASINI AYLANTIRISH
         let currentDeg = 0;
         function spinRefresh() {
             currentDeg += 360;
             document.getElementById('refreshIcon').style.transform = 'rotate(' + currentDeg + 'deg)';
-            
-            // Telefonda titrash effekti (Haptic Feedback)
-            if(tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
+            if(tg.HapticFeedback) { tg.HapticFeedback.impactOccurred('medium'); }
         }
 
+        // MODALLARNI OCHISH/YOPISH
         function openModal() { document.getElementById('pubg-modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('pubg-modal').style.display = 'none'; }
+        
         function openPaymentModal() { document.getElementById('payment-modal').style.display = 'flex'; }
         function closePaymentModal() { document.getElementById('payment-modal').style.display = 'none'; }
 
+        function openAdminModal() { document.getElementById('admin-modal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
+
+        // TO'LOV MANTIQI
         let selectedMethod = null;
         function selectMethod(method) {
             document.getElementById('method_uzcard').classList.remove('active');
