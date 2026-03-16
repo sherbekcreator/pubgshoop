@@ -7,10 +7,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        /* Tana paddingi o'zgartirildi (Header qotib turishi uchun) */
         body { background-color: #0b1121; color: white; padding: 0 15px 80px 15px; }
         
-        /* 1-ISH: HEADER TEPADA QOTIB TURISHI (STICKY) */
+        /* HEADER */
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 15px 0 15px 0; margin-bottom: 5px;
@@ -101,14 +100,21 @@
         .continue-btn { width: 100%; background-color: #1e1b4b; color: #4338ca; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;}
         .continue-btn.active { background-color: #4338ca; color: white; }
 
-        /* 2-ISH: YANGI TARIX SAHIFASI (2-rasm dizayni) */
-        #history-page { display: none; padding-bottom: 20px; padding-top: 15px;}
-        .history-card { background-color: #1a2236; border-radius: 14px; padding: 18px; margin-bottom: 15px; border: 1px solid #2e374d; }
-        .history-row { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 13px; }
-        .history-row:last-child { margin-bottom: 0; }
-        .history-label { color: #9ca3af; font-weight: 600;}
-        .history-value { font-weight: bold; color: white; }
-        .history-status-text { color: #9ca3af; text-align: center; font-size: 12px; margin-top: 25px; font-weight: 600;}
+        /* 1-Vazifa: SHAXSIY TO'LOV CHEKI (Ko'k halqa uchun - 3-rasm dizayni) */
+        #personal-receipt-page { display: none; padding-bottom: 20px; padding-top: 15px;}
+        .receipt-card { background-color: #1a2236; border-radius: 14px; padding: 18px; margin-bottom: 15px; border: 1px solid #2e374d; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 13px; }
+        .receipt-row:last-child { margin-bottom: 0; }
+        .receipt-label { color: #9ca3af; font-weight: 600;}
+        .receipt-value { font-weight: bold; color: white; }
+        .receipt-status-text { color: #9ca3af; text-align: center; font-size: 12px; margin-top: 25px; font-weight: 600;}
+
+        /* 2-Vazifa: UMUMIY TARIX SAHIFASI (Oq halqa uchun - 1-rasm sariq dizayni) */
+        #general-history-page { display: none; padding-bottom: 20px; padding-top: 15px;}
+        .history-tabs-container { display: flex; justify-content: space-around; border-bottom: 1px solid #2e374d; margin-bottom: 20px;}
+        .history-tab { font-size: 14px; color: #9ca3af; padding-bottom: 10px; cursor: pointer; font-weight: 600; width: 50%; text-align: center;}
+        .history-tab.active { color: #4338ca; border-bottom: 2px solid #4338ca;}
+        .empty-history { text-align: center; color: #9ca3af; font-size: 12px; margin-top: 40px;}
     </style>
 </head>
 <body>
@@ -138,7 +144,7 @@
             </h1>
             <div class="action-row">
                 <button class="action-btn" onclick="openDepositPage()"><span>💳</span> Hisobni to'ldirish</button>
-                <button class="action-btn" onclick="openHistoryPage()"><span>🕒</span> To'lov tarixi</button>
+                <button class="action-btn" onclick="openPersonalReceipt()"><span>🕒</span> To'lov tarixi</button>
             </div>
         </div>
 
@@ -180,7 +186,7 @@
 
         <div class="bottom-nav">
             <div class="nav-item active-nav" onclick="goHome()"><span>🏠</span><p>Asosiy</p></div>
-            <div class="nav-item" onclick="openHistoryPage()"><span>🕒</span><p>Tarix</p></div>
+            <div class="nav-item" onclick="openGeneralHistory()"><span>🕒</span><p>Tarix</p></div>
             <div class="nav-item"><span>⚙️</span><p>Sozlamalar</p></div>
         </div>
     </div>
@@ -207,34 +213,57 @@
 
         <button class="continue-btn" id="btn_continue" onclick="continuePayment()">Davom etish</button>
     </div>
-    <div id="history-page">
+    <div id="personal-receipt-page">
         <div class="deposit-top-bar">
             <div class="back-icon" onclick="goHome()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </div>
-            <div class="deposit-title">To'lovlar tarixi</div>
-            <div style="width: 24px;"></div> </div>
+            <div class="deposit-title">Chek tafsilotlari</div>
+            <div style="width: 24px;"></div>
+        </div>
 
-        <div class="history-card">
-            <div class="history-row">
-                <span class="history-label">Turi</span>
-                <span class="history-value">To'lov</span>
+        <div class="receipt-card">
+            <div class="receipt-row">
+                <span class="receipt-label">Turi</span>
+                <span class="receipt-value">To'lov</span>
             </div>
-            <div class="history-row">
-                <span class="history-label">Miqdor</span>
-                <span class="history-value">21 000 uzs</span>
+            <div class="receipt-row">
+                <span class="receipt-label">Miqdor</span>
+                <span class="receipt-value" style="color: #fbbf24;">21 000 uzs</span> 
             </div>
-            <div class="history-row">
-                <span class="history-label">Sana</span>
-                <span class="history-value">16/03/2026, 10:27</span>
+            <div class="receipt-row">
+                <span class="receipt-label">Sana</span>
+                <span class="receipt-value">16/03/2026, 10:27</span>
             </div>
-            <div class="history-row">
-                <span class="history-label">Holat</span>
-                <span class="history-value" style="color: #9ca3af;">completed</span>
+            <div class="receipt-row">
+                <span class="receipt-label">Holat</span>
+                <span class="receipt-value" style="color: #4ade80;">completed</span>
             </div>
         </div>
 
-        <div class="history-status-text">Barcha ma'lumotlar ko'rsatildi</div>
+        <div class="receipt-status-text">Barcha ma'lumotlar ko'rsatildi</div>
+    </div>
+    <div id="general-history-page">
+        <div class="deposit-top-bar">
+            <div style="width: 24px;"></div>
+            <div class="deposit-title">Tarix</div>
+            <div style="width: 24px;"></div>
+        </div>
+
+        <div class="history-tabs-container">
+            <div class="history-tab active">Buyurtmalar</div>
+            <div class="history-tab">Balans</div>
+        </div>
+
+        <div class="empty-history">
+            Hozircha tarix bo'sh
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="goHome()"><span>🏠</span><p>Asosiy</p></div>
+            <div class="nav-item active-nav" onclick="openGeneralHistory()"><span>🕒</span><p>Tarix</p></div>
+            <div class="nav-item"><span>⚙️</span><p>Sozlamalar</p></div>
+        </div>
     </div>
     <div class="modal-overlay" id="pubg-modal">
         <div class="modal-content">
@@ -257,7 +286,6 @@
         </div>
     </div>
 
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
@@ -279,7 +307,6 @@
             }
         } catch (e) {}
 
-        // YANGILASH TUGMASI
         let currentDeg = 0;
         function spinRefresh() {
             currentDeg += 360;
@@ -287,29 +314,40 @@
             if(tg.HapticFeedback) { tg.HapticFeedback.impactOccurred('medium'); }
         }
 
-        // --- SAHIFALARNI O'ZGARTIRISH ---
-        function openDepositPage() {
-            document.getElementById('main-page').style.display = 'none';
-            document.getElementById('history-page').style.display = 'none';
-            document.getElementById('deposit-page').style.display = 'block';
-            window.scrollTo(0, 0); 
-        }
-
-        function openHistoryPage() {
+        // --- SAHIFALARNI BOSHQARISH ---
+        function hideAllPages() {
             document.getElementById('main-page').style.display = 'none';
             document.getElementById('deposit-page').style.display = 'none';
-            document.getElementById('history-page').style.display = 'block';
-            window.scrollTo(0, 0); 
+            document.getElementById('personal-receipt-page').style.display = 'none';
+            document.getElementById('general-history-page').style.display = 'none';
         }
 
         function goHome() {
-            document.getElementById('deposit-page').style.display = 'none';
-            document.getElementById('history-page').style.display = 'none';
+            hideAllPages();
             document.getElementById('main-page').style.display = 'block';
             window.scrollTo(0, 0);
         }
 
-        // --- TABLARNI O'ZGARTIRISH (ID / Avto 24/7) ---
+        function openDepositPage() {
+            hideAllPages();
+            document.getElementById('deposit-page').style.display = 'block';
+            window.scrollTo(0, 0); 
+        }
+
+        // 1-Vazifa ochilishi (Ko'k halqa)
+        function openPersonalReceipt() {
+            hideAllPages();
+            document.getElementById('personal-receipt-page').style.display = 'block';
+            window.scrollTo(0, 0); 
+        }
+
+        // 2-Vazifa ochilishi (Oq halqa)
+        function openGeneralHistory() {
+            hideAllPages();
+            document.getElementById('general-history-page').style.display = 'block';
+            window.scrollTo(0, 0); 
+        }
+
         function switchTab(tab) {
             if(tab === 'id') {
                 document.getElementById('tab-id').className = 'tab-item tab-active';
@@ -324,11 +362,9 @@
             }
         }
 
-        // PUBG MODAL
         function openModal() { document.getElementById('pubg-modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('pubg-modal').style.display = 'none'; }
 
-        // TO'LOV MANTIQI
         let selectedMethod = null;
         function selectMethod(method) {
             document.getElementById('method_uzcard').classList.remove('active');
