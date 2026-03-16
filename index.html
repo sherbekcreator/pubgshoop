@@ -7,10 +7,15 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: #0b1121; color: white; padding: 15px; padding-bottom: 80px; }
+        /* Tana paddingi o'zgartirildi (Header qotib turishi uchun) */
+        body { background-color: #0b1121; color: white; padding: 0 15px 80px 15px; }
         
-        /* HEADER (Profil) */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        /* 1-ISH: HEADER TEPADA QOTIB TURISHI (STICKY) */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 0 15px 0; margin-bottom: 5px;
+            position: sticky; top: 0; background-color: #0b1121; z-index: 99;
+        }
         .user-info { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #4338ca; display: flex; justify-content: center; align-items: center; font-size: 18px;}
         .user-details h3 { font-size: 13px; margin: 0; text-transform: uppercase; font-weight: 800;}
@@ -75,9 +80,9 @@
         .product-item { display: flex; justify-content: space-between; align-items: center; background-color: #1a2236; padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #2e374d;}
         .buy-btn { background-color: #4338ca; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px;}
 
-        /* --- YANGI: HISOB TO'LDIRISH SAHIFASI --- */
-        #deposit-page { display: none; padding-bottom: 20px; }
-        .deposit-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; margin-top: 5px;}
+        /* HISOB TO'LDIRISH SAHIFASI */
+        #deposit-page { display: none; padding-bottom: 20px; padding-top: 15px;}
+        .deposit-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;}
         .back-icon { font-size: 24px; color: white; cursor: pointer; display: flex; align-items: center;}
         .deposit-title { font-size: 14px; font-weight: 700; color: #4338ca;}
         .guide-btn { background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;}
@@ -95,6 +100,15 @@
         
         .continue-btn { width: 100%; background-color: #1e1b4b; color: #4338ca; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;}
         .continue-btn.active { background-color: #4338ca; color: white; }
+
+        /* 2-ISH: YANGI TARIX SAHIFASI (2-rasm dizayni) */
+        #history-page { display: none; padding-bottom: 20px; padding-top: 15px;}
+        .history-card { background-color: #1a2236; border-radius: 14px; padding: 18px; margin-bottom: 15px; border: 1px solid #2e374d; }
+        .history-row { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 13px; }
+        .history-row:last-child { margin-bottom: 0; }
+        .history-label { color: #9ca3af; font-weight: 600;}
+        .history-value { font-weight: bold; color: white; }
+        .history-status-text { color: #9ca3af; text-align: center; font-size: 12px; margin-top: 25px; font-weight: 600;}
     </style>
 </head>
 <body>
@@ -124,7 +138,7 @@
             </h1>
             <div class="action-row">
                 <button class="action-btn" onclick="openDepositPage()"><span>💳</span> Hisobni to'ldirish</button>
-                <button class="action-btn"><span>🕒</span> To'lov tarixi</button>
+                <button class="action-btn" onclick="openHistoryPage()"><span>🕒</span> To'lov tarixi</button>
             </div>
         </div>
 
@@ -165,8 +179,8 @@
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-item active-nav"><span>🏠</span><p>Asosiy</p></div>
-            <div class="nav-item"><span>🕒</span><p>Tarix</p></div>
+            <div class="nav-item active-nav" onclick="goHome()"><span>🏠</span><p>Asosiy</p></div>
+            <div class="nav-item" onclick="openHistoryPage()"><span>🕒</span><p>Tarix</p></div>
             <div class="nav-item"><span>⚙️</span><p>Sozlamalar</p></div>
         </div>
     </div>
@@ -192,6 +206,35 @@
         </div>
 
         <button class="continue-btn" id="btn_continue" onclick="continuePayment()">Davom etish</button>
+    </div>
+    <div id="history-page">
+        <div class="deposit-top-bar">
+            <div class="back-icon" onclick="goHome()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </div>
+            <div class="deposit-title">To'lovlar tarixi</div>
+            <div style="width: 24px;"></div> </div>
+
+        <div class="history-card">
+            <div class="history-row">
+                <span class="history-label">Turi</span>
+                <span class="history-value">To'lov</span>
+            </div>
+            <div class="history-row">
+                <span class="history-label">Miqdor</span>
+                <span class="history-value">21 000 uzs</span>
+            </div>
+            <div class="history-row">
+                <span class="history-label">Sana</span>
+                <span class="history-value">16/03/2026, 10:27</span>
+            </div>
+            <div class="history-row">
+                <span class="history-label">Holat</span>
+                <span class="history-value" style="color: #9ca3af;">completed</span>
+            </div>
+        </div>
+
+        <div class="history-status-text">Barcha ma'lumotlar ko'rsatildi</div>
     </div>
     <div class="modal-overlay" id="pubg-modal">
         <div class="modal-content">
@@ -244,16 +287,26 @@
             if(tg.HapticFeedback) { tg.HapticFeedback.impactOccurred('medium'); }
         }
 
-        // --- SAHIFALARNI O'ZGARTIRISH (Deposit / Asosiy) ---
+        // --- SAHIFALARNI O'ZGARTIRISH ---
         function openDepositPage() {
             document.getElementById('main-page').style.display = 'none';
+            document.getElementById('history-page').style.display = 'none';
             document.getElementById('deposit-page').style.display = 'block';
-            window.scrollTo(0, 0); // Eng tepaga qaytarish
+            window.scrollTo(0, 0); 
+        }
+
+        function openHistoryPage() {
+            document.getElementById('main-page').style.display = 'none';
+            document.getElementById('deposit-page').style.display = 'none';
+            document.getElementById('history-page').style.display = 'block';
+            window.scrollTo(0, 0); 
         }
 
         function goHome() {
             document.getElementById('deposit-page').style.display = 'none';
+            document.getElementById('history-page').style.display = 'none';
             document.getElementById('main-page').style.display = 'block';
+            window.scrollTo(0, 0);
         }
 
         // --- TABLARNI O'ZGARTIRISH (ID / Avto 24/7) ---
