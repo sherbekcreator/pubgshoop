@@ -287,31 +287,27 @@
             }
         } catch (e) {}
 
-        // 🔴 ENG MUHIMI: BOTDAN KELGAN BALANSNI EKRANGA CHIQARISH 🔴
+        // --- BAZADAN KELGAN MA'LUMOTLARNI EKRANGA CHIQARISH ---
         const urlParams = new URLSearchParams(window.location.search);
         let userBalance = urlParams.get('balance');
+        let lastDeposit = urlParams.get('last'); // Oxirgi to'lovni oladi
 
         if (userBalance !== null) {
-            // Raqamni joy tashlab chiroyli qilish (2000000 -> 2 000 000)
-            let formattedBalance = Number(userBalance).toLocaleString('ru-RU');
-            
-            // 1. Asosiy ekrandagi balansni yangilash
-            document.getElementById('main_balance_text').innerText = formattedBalance;
-            
-            // 2. Tarix (Chek) dagi summani yangilash (Eski 21,000 o'rniga)
-            document.getElementById('receipt_amount').innerText = formattedBalance + " uzs";
-
-            // 3. Chek sanasini bugungi haqiqiy kunga o'zgartirish
-            let today = new Date();
-            let dd = String(today.getDate()).padStart(2, '0');
-            let mm = String(today.getMonth() + 1).padStart(2, '0'); // Yanvar 0 dan boshlanadi
-            let yyyy = today.getFullYear();
-            let hh = String(today.getHours()).padStart(2, '0');
-            let mins = String(today.getMinutes()).padStart(2, '0');
-            
-            let dateStr = dd + '/' + mm + '/' + yyyy + ', ' + hh + ':' + mins;
-            document.getElementById('receipt_date').innerText = dateStr;
+            document.getElementById('main_balance_text').innerText = Number(userBalance).toLocaleString('ru-RU');
         }
+        
+        if (lastDeposit !== null && lastDeposit !== '0') {
+            document.getElementById('receipt_amount').innerText = Number(lastDeposit).toLocaleString('ru-RU') + " uzs";
+        }
+
+        // Chek sanasi (Bugungi)
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0'); 
+        let yyyy = today.getFullYear();
+        let hh = String(today.getHours()).padStart(2, '0');
+        let mins = String(today.getMinutes()).padStart(2, '0');
+        document.getElementById('receipt_date').innerText = dd + '/' + mm + '/' + yyyy + ', ' + hh + ':' + mins;
 
         let currentDeg = 0;
         function spinRefresh() {
