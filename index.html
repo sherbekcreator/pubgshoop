@@ -84,19 +84,20 @@
         .continue-btn { width: 100%; background-color: #1e1b4b; color: #4338ca; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;}
         .continue-btn.active { background-color: #4338ca; color: white; }
 
+        /* TO'LOV TARIXI SAHIFASI DIZAYNI */
         #personal-receipt-page { display: none; padding-bottom: 20px; padding-top: 15px;}
         .receipt-card { background-color: #1a2236; border-radius: 14px; padding: 18px; margin-bottom: 15px; border: 1px solid #2e374d; }
         .receipt-row { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 13px; }
         .receipt-row:last-child { margin-bottom: 0; }
         .receipt-label { color: #9ca3af; font-weight: 600;}
         .receipt-value { font-weight: bold; color: white; }
-        .receipt-status-text { color: #9ca3af; text-align: center; font-size: 12px; margin-top: 25px; font-weight: 600;}
+        .receipt-status-text { color: #9ca3af; text-align: center; font-size: 12px; margin-top: 25px; font-weight: 600; margin-bottom: 20px;}
+        .empty-history { text-align: center; color: #9ca3af; font-size: 13px; margin-top: 50px; font-weight: bold;}
 
         #general-history-page { display: none; padding-bottom: 20px; padding-top: 15px;}
         .history-tabs-container { display: flex; justify-content: space-around; border-bottom: 1px solid #2e374d; margin-bottom: 20px;}
         .history-tab { font-size: 14px; color: #9ca3af; padding-bottom: 10px; cursor: pointer; font-weight: 600; width: 50%; text-align: center;}
         .history-tab.active { color: #4338ca; border-bottom: 2px solid #4338ca;}
-        .empty-history { text-align: center; color: #9ca3af; font-size: 12px; margin-top: 40px;}
     </style>
 </head>
 <body>
@@ -202,27 +203,12 @@
             <div class="back-icon" onclick="goHome()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </div>
-            <div class="deposit-title">Chek tafsilotlari</div>
+            <div class="deposit-title">To'lovlar tarixi</div>
             <div style="width: 24px;"></div>
         </div>
 
-        <div class="receipt-card">
-            <div class="receipt-row">
-                <span class="receipt-label">Turi</span>
-                <span class="receipt-value">To'lov</span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Miqdor</span>
-                <span class="receipt-value" id="receipt_amount" style="color: #fbbf24;">0 uzs</span> 
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Sana</span>
-                <span class="receipt-value" id="receipt_date">Yuklanmoqda...</span>
-            </div>
-            <div class="receipt-row">
-                <span class="receipt-label">Holat</span>
-                <span class="receipt-value" style="color: #4ade80;">completed</span>
-            </div>
+        <div id="history-list-container">
+            <div class="empty-history">Hozircha tarix bo'sh</div>
         </div>
 
         <div class="receipt-status-text">Barcha ma'lumotlar ko'rsatildi</div>
@@ -287,27 +273,56 @@
             }
         } catch (e) {}
 
-        // --- BAZADAN KELGAN MA'LUMOTLARNI EKRANGA CHIQARISH ---
+        // --- BAZADAN KELGAN MA'LUMOTLARNI USHLASH ---
         const urlParams = new URLSearchParams(window.location.search);
         let userBalance = urlParams.get('balance');
-        let lastDeposit = urlParams.get('last'); // Oxirgi to'lovni oladi
+        let histParam = urlParams.get('hist'); // Tranzaksiyalar kitobi (JSON)
 
+        // Asosiy balansni yozish
         if (userBalance !== null) {
             document.getElementById('main_balance_text').innerText = Number(userBalance).toLocaleString('ru-RU');
         }
         
-        if (lastDeposit !== null && lastDeposit !== '0') {
-            document.getElementById('receipt_amount').innerText = Number(lastDeposit).toLocaleString('ru-RU') + " uzs";
+        // Hamma cheklarni o'qib, ekranga chizish
+        if (histParam) {
+            try {
+                let historyArray = JSON.parse(decodeURIComponent(histParam));
+                let container = document.getElementById('history-list-container');
+                
+                if (historyArray.length > 0) {
+                    container.innerHTML = ""; // "Tarix bo'sh" yozuvini o'chirish
+                    
+                    historyArray.forEach(tx => {
+                        let amt = Number(tx.a).toLocaleString('ru-RU');
+                        
+                        // DIQQAT: tx.m bu yerda UZCARD yoki HUMO degan so'z
+                        let cardHTML = `
+                        <div class="receipt-card">
+                            <div class="receipt-row">
+                                <span class="receipt-label">Turi</span>
+                                <span class="receipt-value">${tx.m} orqali to'lov</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Miqdor</span>
+                                <span class="receipt-value" style="color: #fbbf24;">${amt} uzs</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Sana</span>
+                                <span class="receipt-value">${tx.d}</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Holat</span>
+                                <span class="receipt-value" style="color: #4ade80;">completed</span>
+                            </div>
+                        </div>`;
+                        
+                        container.innerHTML += cardHTML; // Har bir chekni ro'yxatga qo'shib boradi
+                    });
+                }
+            } catch (e) {
+                console.error("Xatolik", e);
+            }
         }
-
-        // Chek sanasi (Bugungi)
-        let today = new Date();
-        let dd = String(today.getDate()).padStart(2, '0');
-        let mm = String(today.getMonth() + 1).padStart(2, '0'); 
-        let yyyy = today.getFullYear();
-        let hh = String(today.getHours()).padStart(2, '0');
-        let mins = String(today.getMinutes()).padStart(2, '0');
-        document.getElementById('receipt_date').innerText = dd + '/' + mm + '/' + yyyy + ', ' + hh + ':' + mins;
 
         let currentDeg = 0;
         function spinRefresh() {
