@@ -12,7 +12,7 @@
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0 15px 0; margin-bottom: 5px; position: sticky; top: 0; background-color: #0b1121; z-index: 99; }
         .user-info { display: flex; align-items: center; gap: 10px; }
         
-        /* 1. YANGI AVATAR DIZAYNI (Tushayotgan daxshatli airdrop uchun) */
+        /* AVATAR DIZAYNI */
         .avatar { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 2.5px solid #ef4444; }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -23,8 +23,6 @@
         .btn-browser:active { transform: scale(0.98); }
         
         .balance-card { background-color: #4338ca; border-radius: 14px; padding: 15px; margin-bottom: 20px;}
-        
-        /* 4. BALANS YOZUVINI KATTALASHTIRISH (38px BETON!) */
         .balance-card h1 { font-size: 38px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 800;}
         
         .refresh-btn { display: flex; justify-content: center; align-items: center; width: 22px; height: 22px; background-color: #5c50e6; border-radius: 6px; cursor: pointer; transition: 0.2s; }
@@ -37,10 +35,10 @@
 
         .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; margin-top: 5px;}
         
+        /* BANNER DIZAYNI (Eski, ixcham holatga qaytarildi) */
         .banner { width: 100%; height: 85px; background: linear-gradient(90deg, rgba(11, 17, 33, 0.95), rgba(239, 68, 68, 0.5)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop') center/cover; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; padding: 15px; margin-bottom: 20px; border: 1px solid #ef4444; }
-        
-        /* 2 & 3. BANNER MATNLARINI O'ZGARTIRISH (Tavsif o'chirildi) */
-        .banner h2 { font-size: 15px; color: white; margin: 0; font-weight: 800; text-transform: uppercase;}
+        .banner h2 { font-size: 14px; color: white; margin-bottom: 5px; font-weight: 800;}
+        .banner p { font-size: 10px; font-weight: 600; color: #fbbf24; line-height: 1.3;}
         
         .tab-row { display: flex; background-color: #1a2236; border-radius: 10px; padding: 4px; margin-bottom: 20px; }
         .tab-item { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s;}
@@ -51,7 +49,7 @@
         .game-card { background-color: #1a2236; border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid #2e374d; cursor: pointer;}
         .game-card:active { transform: scale(0.98); }
         
-        /* 1. YANGI TOVAR ICONS (Tushayotgan airdrop) */
+        /* TOVAR RASI (O'yin ichidagi logotip) */
         .game-img { width: 36px; height: 36px; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         .game-img img { width: 100%; height: 100%; object-fit: cover; }
         
@@ -115,8 +113,7 @@
     <div id="main-page">
         <div class="header">
             <div class="user-info">
-                
-                <div class="avatar"><img src="./dropshop_falling.png" alt="DropShop"></div>
+                <div class="avatar"><img src="https://i.postimg.cc/3wV9CWPr/dropshop-falling-png.jpg" alt="DropShop"></div>
                 
                 <div class="user-details">
                     <h3 id="tg_first_name">YUKLANMOQDA...</h3>
@@ -131,7 +128,6 @@
         </button>
 
         <div class="balance-card">
-            
             <h1 style="display: flex; align-items: center; gap: 8px;">
                 <span id="main_balance_text">0</span> so'm 
                 <div class="refresh-btn" onclick="spinRefresh()">
@@ -147,9 +143,9 @@
 
         <div class="section-title">Mashxur e'lonlar</div>
         <div class="banner">
-            
-            <h2>DROPSHOPGA XUSH KELIBSIZ</h2>
-            </div>
+            <h2>DROPSHOP x CHEGIRMA</h2>
+            <p>Eng arzon UC faqat bizning do'konda.</p>
+        </div>
 
         <div class="tab-row">
             <div id="tab-id" class="tab-item tab-active" onclick="switchTab('id')">ID orqali</div>
@@ -161,7 +157,7 @@
             <div class="games-grid">
                 <div class="game-card" onclick="openModal()">
                     
-                    <div class="game-img"><img src="./dropshop_falling.png" alt="UC"></div>
+                    <div class="game-img"><img src="https://i.postimg.cc/3wV9CWPr/dropshop-falling-png.jpg" alt="UC"></div>
                     
                     <div class="game-info">
                         <h4>PUBG Mobile</h4>
